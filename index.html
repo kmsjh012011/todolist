@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
   <title>Todo List</title>
@@ -25,6 +25,7 @@
         border-bottom: 1px solid #ccc;
     }
 </style>
+
 <body>
   <div id="container">
     <header>
@@ -32,7 +33,6 @@
     </header>
 		<section>
 	    <ul id="todo-list">
-            <li class="todo"></li>
 	    </ul>
 		</section>
     <footer>
@@ -41,4 +41,28 @@
     </footer>
   </div>
 </body>
+<script>
+  function 투두입력받아서추가하기(){
+    const todoText = document.querySelector("#input-task").value;
+    const newLiText = "<li>" + todoText + "</li>";
+    const selectedUl = document.querySelector('#todo-list');
+      
+    if(todoText.trim() !== ""){ //trim() = 공백제거
+    selectedUl.innerHTML += newLiText; //todoText만 넣어도 값이 들어있으면 true로 취급해서 정상적으로 작동
+    document.querySelector("#input-task").value="";
+    }
+    else{
+      alert("문자열을 입력해주세요.")
+    }
+  }
+ document.querySelector("#btn-add").addEventListener("click",투두입력받아서추가하기);
+ 
+ function init(){
+  const todoListUl = document.querySelector('#todo-list');
+  if(todoListUl.childElementCount<1){
+    todoListUl.innerText = "할일이 없습니다."
+  }
+ }
+ init()
+</script>
 </html>
