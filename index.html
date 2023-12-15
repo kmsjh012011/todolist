@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Todo List</title>
-  <link rel="stylesheet" href="style.css">
+  <!-- <link rel="stylesheet" href="style.css"> -->
 </head>
 
 <style>
@@ -43,30 +43,118 @@
 </body>
 <script>
   const todoList = []//1.투두들을 넣어둘 배열생성
-  function 투두입력받아서추가하기(todoText ){
+  function 투두입력받아서추가하기(todoText){
     if(todoText !== ""){
-			todoList.push(todoText)//2.투두배열에 입력한 데이터 추가
+      const todo = {
+        text: todoText,
+        done:false
+      }
+			todoList.push(todo)//2.투두배열에 입력한 데이터 추가
     }
     else{
       alert("입력창에 할일을 입력해라");
     }
 }
-function 투두화면에그려주기(todoList){
-		const todoListUl = document.querySelector("#todo-list");
-		todoListUl.innerHTML = ""
-	  if(todoList.length<1){
+
+function 투두토글하기(변수){
+    if(todoList[변수].done === true){
+      todoList[변수].done = false;
+    }
+    else{
+      todoList[변수].done = true;
+    }
+  }
+
+  function 투두수정하기(변수, editText){
+		//텍스트가 있을때만 수정
+    if(editText !== ""){
+		// 배열에서 객체를 선택학고 텍스트속성을 변경
+      todoList[변수].text = editText;
+    }
+    else{
+      alert("수정할 내용을 입력하세요.");
+    }
+  }
+	// 인덱스를 받아 삭제
+  function 투두삭제하기(변수){
+		// 배열에서 객체 순서에 맞는 부분을 삭제 (입력인덱스부터 1개만큼삭제)
+    todoList.splice(변수,1);
+  }
+
+  
+  
+	
+  function 투두화면에그려주기(todoList){
+    const todoListUl = document.querySelector("#todo-list");
+    todoListUl.innerHTML = ""
+    if(todoList.length<1){
       todoListUl.innerHTML = "할일이 없습니다."
     }
-		else{
-			// const newLiText = "<li>"+ todoList[0] +"</li>";
-			// todoListUl.innerHtml += todoLiText
-			// 변수는 0부터 시작, todoList의길이보다 작을때동안 반복
-			for(let 변수=0; 변수<todoList.length; 변수++){
-				const newLiText = "<li>"+ todoList[변수] +"</li>";
-				todoListUl.innerHTML += newLiText
-			}
-		}
-}
+    else{
+      for(let 변수=0; 변수<todoList.length; 변수++){
+        const newLi = document.createElement("li");
+        newLi.innerText = todoList[변수].text;
+        // 완료 또는 취소 토글버튼 추가
+        const toggleBtn = document.createElement("button");
+				// todo객체의 완료여부에 따라 텍스트가 바뀜
+				// true일때는 이미 완료상태이니 "취소"
+				// false일때는 완료를 아직 하지않았으니 "완료"를 보여줘야함
+        if(todoList[변수].done === true){
+          toggleBtn.innerText = "취소";
+        }
+        else{
+          toggleBtn.innerText = "완료";
+        }
+				// 토글버튼에 이벤트 추가
+				// 데이터를 조작하고 조작된 데이터에 기반하여 새로그려주도록하기.
+        toggleBtn.addEventListener("click",function(){
+          투두토글하기(변수);
+          투두화면에그려주기(todoList);
+        });
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.innerText = "삭제";
+        deleteBtn.addEventListener("click", function(){
+          투두삭제하기(변수);
+          투두화면에그려주기(todoList)
+        });
+
+        const editBtn = document.createElement("button");
+        editBtn.innerText = "수정";
+        editBtn.addEventListener("click", function(){
+          const editText = prompt("수정할 내용을 입력하세요.");
+          투두수정하기(변수,editText);
+          투두화면에그려주기(todoList);
+        });
+								
+				// 버튼들을 묶을 div태그 생성
+        const btnDiv = document.createElement("div");
+			  // div에 토글버튼 추가
+        btnDiv.appendChild(toggleBtn);
+				// newLi의 자식요소로 btnDiv추가
+				btnDiv.appendChild(deleteBtn);
+        btnDiv.appendChild(editBtn);
+        newLi.appendChild(btnDiv);
+
+        // todoListUl.innerHTML += newLiText;
+        todoListUl.appendChild(newLi);
+
+        if(todoList[변수].done === true){
+          toggleBtn.innerText = "취소";
+          newLi.style.textDecoration = "line-through";
+          newLi.style.color = "red";
+        }
+        else{
+          toggleBtn.innerText = "완료";
+          newLi.style.textDecoration = "none";
+          newLi.style.color = "black";
+        }
+
+				// todoListUl의 자식요소로 만든 li를 추가한다
+				todoListUl.appendChild(newLi);
+      }
+    }
+  }
 
 function 추가버튼클릭이벤트(){
     const todoText = document.querySelector("#input-task").value;
